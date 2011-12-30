@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+    "@DOCBOOK_DTD@"
+[
+    <!ENTITY % xinclude SYSTEM "./mod/xinclude.mod">
+    %xinclude;
+
+    <!ENTITY % snippets SYSTEM "./mod/snippets.mod">
+    %snippets;
+]>
+<book id="manual" lang="pt-br">
+    <bookinfo>
+        <title>&book.title;</title>
+        <subtitle>&book.subtitle;</subtitle>
+        <edition>&book.edition;</edition>
+        <pubdate><?dbtimestamp?></pubdate>
+        <copyright>
+            <year>2011-<?dbtimestamp format="Y"?></year>
+            <holder>
+                Zebra.
+                (<ulink url="&zebra.link;" />)
+            </holder>
+        </copyright>
+    </bookinfo>
+
+    <part id="introduction">
+        <title>Introdução</title>
+        <xi:include href="xml-general/overview.xml" />
+        <xi:include href="xml-general/installation.xml" />
+    </part>
+
+    <part id="reference">
+        <title>Referência</title>
+
+        <chapter id="reference.validate">
+            <title>Zebra_Validate</title>
+            <xi:include href="xml-module/zebra-validate.xml" />
+            <xi:include href="xml-module/zebra-validate-cnpj.xml" />
+            <xi:include href="xml-module/zebra-validate-cpf.xml" />
+        </chapter>
+
+        <chapter id="reference.service">
+            <title>Zebra_Service</title>
+            <xi:include href="xml-module/zebra-service.xml" />
+            <xi:include href="xml-module/zebra-service-pagseguro.xml" />
+        </chapter>
+    </part>
+
+    <xi:include href="xml-general/copyrights.xml" />
+
+    <index id="the.index" />
+</book>

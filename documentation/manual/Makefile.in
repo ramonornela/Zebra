@@ -1,0 +1,118 @@
+#
+# Zebra
+#
+# @license http://creativecommons.org/licenses/by-sa/3.0/deed.pt_BR  CC BY-SA
+#
+
+#
+# Makefile - Constrói documentação da biblioteca Zebra
+#
+# Principais operações:
+#
+# all - Renderiza manual DocBook no formato HTML.
+# html - Renderiza manual DocBook no formato HTML.
+# pdf - Renderiza manual DocBook no formato PDF.
+# clean - Remove arquivos gerados pela documentação.
+# cleanall - Remove arquivos do compilador e os HTML e PDF da documentação.
+# check - Valida manual utilizando.
+# check1 - Valida um arquivo do manual. Requer parâmetro XMLFILE.
+#
+
+# -- parâmetros que você provavelmente irá mudar --
+
+# XMLFILE é o nome de um arquivo XML DocBook que você quer testar com xmllint,
+# quando utilizando a operação 'check1'
+
+# -- parâmetros gerados na geração do compilador --
+
+XSLTPROC=@XSLTPROC@
+XMLLINT=@XMLLINT@
+FOP=@FOP@
+ECSRC=@ECSRC@
+HERE=@HERE@
+
+# -- parâmetros das operações --
+
+DOCBOOK_DTD?=http://framework.zend.com/docbook/xml/4.5/docbookx.dtd
+DOCBOOK_XSL?=http://framework.zend.com/docbook-xsl/htmlhelp/htmlhelp.xsl
+DOCBOOK_FO_XSL?=http://framework.zend.com/docbook-xsl/fo/docbook.xsl
+HTML_XSL=html.xsl
+PDF_XSL=pdf.xsl
+MANUAL_XML=manual.xml
+LINT_XML=lint.xml.in
+MODULE=xml-module
+XMLFILE=
+
+# ----- OPERAÇÕES - GERAIS -----------------------------------------------------
+
+all:	html
+
+$(MANUAL_XML): $(MANUAL_XML).in
+	sed -e 's!@DOCBOOK_DTD@!$(DOCBOOK_DTD)!' $< > $@
+
+# ----- OPERAÇÕES - HTML -------------------------------------------------------
+
+html: $(MANUAL_XML) $(HTML_XSL)
+	@echo "Renderizando manual HTML com $(XSLTPROC)..."
+	$(XMLLINT) --xinclude --output _temp_manual.xml $(MANUAL_XML)
+	$(XSLTPROC) --xinclude --output html/index.html $(HTML_XSL) _temp_manual.xml
+	@echo "Copiando imagens do manual..."
+	-[ -d figures ] && cp -r figures html/
+
+$(HTML_XSL): $(HTML_XSL).in
+	sed -e 's!@DOCBOOK_XSL@!$(DOCBOOK_XSL)!' $< > $@
+
+# ----- OPERAÇÕES - PDF --------------------------------------------------------
+
+pdf: pdf-dir $(MANUAL_XML) $(PDF_XSL)
+	@echo "Renderizando manual PDF com $(FOP)..."
+	$(XMLLINT) --xinclude --output _temp_manual.xml $(MANUAL_XML)
+	$(XSLTPROC) --xinclude --output Zebra.fo $(PDF_XSL) _temp_manual.xml
+	"$(FOP)" -fo Zebra.fo -pdf pdf/Zebra.pdf
+
+pdf-dir:
+	@if [ ! -e pdf ]; then \
+		mkdir pdf; \
+	fi
+
+$(PDF_XSL): $(PDF_XSL).in
+	sed -e 's!@DOCBOOK_FO_XSL@!$(DOCBOOK_FO_XSL)!' $< > $@
+
+# ----- OPERAÇÕES - CHECK ------------------------------------------------------
+
+check: $(MANUAL_XML)
+	@echo "Verificando arquivos XML do manual com $(XMLLINT)..."
+	@$(XMLLINT) --xinclude --output _temp_manual.xml $(MANUAL_XML)
+	@$(XMLLINT) --valid --noout --postvalid _temp_manual.xml \
+		&& echo "OK"
+
+check1: $(LINT_XML)
+	@if [ -n "$(XMLFILE)" ] ; then \
+		if [ -f "$(MODULE)/$(XMLFILE)" ] ; then \
+			echo "Verificando $(XMLFILE) com $(XMLLINT)..." ; \
+			sed -e 's!@XMLFILE@!$(MODULE)/$(XMLFILE)!' -e 's!@DOCBOOK_DTD@!$(DOCBOOK_DTD)!' $(LINT_XML) \
+			| $(XMLLINT) --xinclude --output _temp_$(XMLFILE) - ; \
+			$(XMLLINT) --valid --noout --postvalid _temp_$(XMLFILE) \
+			&& echo "OK" ; \
+		else \
+			echo "Arquivo $(MODULE)/$(XMLFILE) não encontrato." ; \
+		fi ; \
+	else \
+		echo "Por favor, especifique um arquivo. Exemplo: 'make XMLFILE=zebra-validate.xml check1'" ; \
+	fi
+
+# ----- OPERAÇÕES - CLEAN ------------------------------------------------------
+
+clean:
+	-rm -f html/*.html html/*.hhp html/*.hhc html/HTML.manifest
+	-rm -Rf pdf
+	@if [ -f html/figures ] ; then \
+		rm -Rf html/figures ; \
+	fi
+	-rm -f _temp_*.xml *.fo
+
+cleanall: clean
+	-rm -f config.* configure
+	-rm -rf autom4te.cache
+	-rm -f Makefile
+	-rm -f $(HTML_XSL) $(PDF_XSL) $(MANUAL_XML)

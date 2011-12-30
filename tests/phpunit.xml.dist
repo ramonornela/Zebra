@@ -1,0 +1,28 @@
+<phpunit bootstrap="./bootstrap.php"
+         verbose="true">
+    <testsuite name="Zebra Test Suite">
+        <directory>./</directory>
+    </testsuite>
+
+    <filter>
+        <whitelist>
+            <directory suffix="php">../library</directory>
+            <exclude>
+                <directory>../library/Zend</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="./logs" yui="true" 
+             highlight="false" 
+             lowUpperBound="30" 
+             highLowerBound="80" 
+        />
+        <log type="testdox-html" target="./logs/testdox.html" />
+    </logging>
+
+    <php>
+        <ini name="date.timezone" value="America/Sao_Paulo" />
+    </php>
+</phpunit>

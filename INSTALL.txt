@@ -1,0 +1,11 @@
+INSTALAÇÃO
+----------
+
+Instalar o Zebra não necessita de muito esforço. Basta fazer o download da
+biblioteca, extraí-la em um diretório qualquer e adicionar o namespace "Zebra"
+ao autoload do Zend Framework.
+
+REQUISITOS
+-------------------
+
+Zend Framework 1.11

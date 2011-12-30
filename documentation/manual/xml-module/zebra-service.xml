@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE entities
+[
+    <!ENTITY % snippets SYSTEM "../mod/snippets.mod">
+    %snippets;
+]>
+<sect1 id="zebra.service" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <title>Introdução</title>
+    <para>
+        Zebra fornece clientes de webservices brasileiros para o
+        <ulink url="&zf.manual.link;/zend.service.introduction.html">Zend Framework</ulink>.
+    </para>
+</sect1>

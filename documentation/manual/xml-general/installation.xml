@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE entities
+[
+    <!ENTITY % snippets SYSTEM "../mod/snippets.mod">
+    %snippets;
+]>
+<chapter id="introduction.installation">
+    <title>Instalação</title>
+    <sect1 id="introduction.installation.requirements">
+        <title>Pré-requisitos</title>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Baixar <ulink url="&zebra.link;">versão estável mais
+                    recente do Zebra</ulink>.
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Adicionar a biblioteca Zebra ao
+                    <ulink url="&zf.manual.link;/learning.autoloading.usage.html">
+                    loader do Zend Framework.</ulink> O Zebra não utiliza
+                    inclusão de arquivos. É realmente necessário que você
+                    registre o namespace Zebra.
+                </para>
+            </listitem>
+        </itemizedlist>
+    </sect1>
+    <sect1 id="introduction.installation.namespace">
+        <title>Adicionando namespace Zebra ao Zend Framework</title>
+        <para>
+            Há  duas formas de registrar o namespace. Diretamente no código
+            e através do arquivo de configuração da aplicação, geralmente
+            localizado em
+            <filename>application/configs/application.ini</filename>.
+        </para>
+        <programlisting language="ini"><![CDATA[
+; pelo arquivo de configuração da aplicação
+autoloaderNamespaces[] = "Zebra"
+]]></programlisting>
+            <programlisting language="php"><![CDATA[
+// diretamente no código
+Zend_Loader_Autoloader::getInstance()->registerNamespace('Zebra');
+]]></programlisting>
+        </sect1>
+</chapter>

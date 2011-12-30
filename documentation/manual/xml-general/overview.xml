@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE entities
+[
+    <!ENTITY % snippets SYSTEM "../mod/snippets.mod">
+    %snippets;
+]>
+<chapter id="introduction.overview">
+    <title>Resumo</title>
+    <para>
+        Zebra é um projeto em <acronym>PHP</acronym> 5 OpenSource que tem o
+        objetivo de disponibilizar componentes complementares ao
+        <ulink url="&zf.link;">Zend Framework</ulink>
+        para resolver problemas tipicamente brasileiros.
+    </para>
+    <para>
+        Zebra não é um <ulink url="&zf.link;">Zend Framework</ulink> melhorado
+        ou adaptado, ele apenas fornecer componentes brasileiros para o
+        <ulink url="&zf.link;">Zend Framework</ulink>.
+    </para>
+</chapter>

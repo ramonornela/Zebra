@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE entities
+[
+    <!ENTITY % snippets SYSTEM "../mod/snippets.mod">
+    %snippets;
+]>
+<sect1 id="zebra.validate">
+    <title>Introdução</title>
+    <para>
+        Zebra implementa validadores para o
+        <ulink url="&zf.manual.link;/zend.validate.set.html">Zend Framework</ulink>.
+    </para>
+</sect1>

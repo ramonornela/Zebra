@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE entities
+[
+    <!ENTITY % snippets SYSTEM "../mod/snippets.mod">
+    %snippets;
+]>
+<appendix id="copyrights">
+    <title>Informações Sobre Direitos Autorais</title>
+    <para>
+        Os seguintes direitos autorais são aplicáveis a parcelas do Zebra.
+    </para>
+    <para>
+        Copyright &#169; 2011-<?dbtimestamp format="Y"?> Zebra.
+        (<ulink url="&zebra.link;" />)
+    </para>
+</appendix>

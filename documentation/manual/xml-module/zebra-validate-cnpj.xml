@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 id="zebra.validate.cnpj">
+    <title>Zebra_Validate_Cnpj</title>
+    <para>
+        <classname>Zebra_Validate_Cnpj</classname> permite verificar se um
+        <ulink url="http://www.receita.fazenda.gov.br/GuiaContribuinte/CNPJ/default.htm"><acronym>CNPJ</acronym></ulink>
+        é válido ou não.
+    </para>
+
+    <note>
+        <title>Verificação na Receita Federal</title>
+        <para>
+            A validação que o componente fornece é somente de formato. Não há
+            garantias de que um <acronym>CNPJ</acronym> validado por esse
+            componente seja um <acronym>CNPJ</acronym> válido na 
+            <ulink url="http://www.receita.fazenda.gov.br">Receita Federal</ulink>.
+        </para>
+    </note>
+
+    <programlisting language="php"><![CDATA[
+$validator = new Zebra_Validate_Cnpj();
+if ($validator->isValid('12345678000100')) {
+    // valor é um CNPJ válido
+} else {
+    // valor não é um CNPJ válido
+}
+]]></programlisting>
+
+    <programlisting language="php"><![CDATA[
+$validator = new Zebra_Validate_Cnpj();
+$validator->setSeparatorMode(Zebra_Validate_Cnpj::SEPARATOR_ON);
+if ($validator->isValid('12.345.678/0001-00')) {
+    // valor é um CNPJ válido
+} else {
+    // valor não é um CNPJ válido
+}
+]]></programlisting>
+
+    <para>Opções aceitas pelo <classname>Zebra_Validate_Cnpj</classname>:</para>
+
+    <itemizedlist>
+        <listitem>
+            <para>
+                <emphasis><property>separator_mode</property></emphasis>:
+                Indica se separadores devem ser considerados. Aceita os
+                seguintes valores:
+                <itemizedlist>
+                    <listitem>
+                        <para><property>Zebra_Validate_Cnpj::SEPARATOR_AUTO</property>
+                        (default): Indica que será detectado automaticamente o
+                        formato do valor de entrada. Com esse valor o validador
+                        irá tentar validar tanto '12345678000100' quanto
+                        '12.345.678/0001-00'.</para>
+                    </listitem>
+                    <listitem>
+                        <para><property>Zebra_Validate_Cnpj::SEPARATOR_ON</property>:
+                        Indica que será aceito somente valores no formato
+                        '12.345.678/0001-00'.</para>
+                    </listitem>
+                    <listitem>
+                        <para><property>Zebra_Validate_Cnpj::SEPARATOR_OFF</property>:
+                        Indica que será aceito somente valores no formato
+                        '12345678000100'.</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </listitem>
+    </itemizedlist>
+</sect1>
