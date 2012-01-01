@@ -1,0 +1,33 @@
+# Netbeans e Eclipse arquivos #
+###################
+nbproject/
+.project
+.buildpath
+.settings/
+
+# tests #
+###################
+tests/phpunit.xml
+
+# sistemas operacionais #
+###################
+.DS_Store
+*~
+*.swp
+
+# documentação #
+###################
+
+documentation/manual/Makefile
+documentation/manual/_temp_manual.xml
+documentation/manual/autom4te.cache/
+documentation/manual/config.log
+documentation/manual/config.nice
+documentation/manual/config.status
+documentation/manual/configure
+documentation/manual/html.xsl
+documentation/manual/html/*.html
+documentation/manual/html/htmlhelp.hhp
+documentation/manual/html/toc.hhc
+documentation/manual/manual.xml
+documentation/manual/pdf/

@@ -30,6 +30,7 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
     const INVALID        = 'cpfInvalid';
     const INVALID_FORMAT = 'cpfInvalidFormat';
     const NOT_CPF        = 'notCpf';
+    const SERVICE        = 'cpfService';
     /**#@-*/
 
     /**
@@ -53,10 +54,16 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
         self::INVALID        => 'Tipo de dado inválido. É esperado uma string',
         self::INVALID_FORMAT => 'Formatação é inválida',
         self::NOT_CPF        => "'%value%' não é um CPF válido",
+        self::SERVICE        => "'%value%' seems to be an invalid creditcard number",
     );
 
     /**
-     * @param  array|string|integer $options
+     * @var callback
+     */
+    protected $_service = null;
+
+    /**
+     * @param  array|string|integer|Zend_Config $options
      * @return void
      */
     public function __construct($options = null)
@@ -66,11 +73,15 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
                 $options = $options->toArray();
             }
 
-            if (is_array($options) && array_key_exists('separatorMode', $options)) {
-                $options = $options['separatorMode'];
+            if (!is_array($options)) {
+                $options = array('separatorMode' => $options);
+            } else if (array_key_exists('service', $options)) {
+                $this->setService($options['service']);
             }
 
-            $this->setSeparatorMode($options);
+            if (array_key_exists('separatorMode', $options)) {
+                $this->setSeparatorMode($options['separatorMode']);
+            }
         }
     }
 
@@ -97,11 +108,27 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
         }
 
         if ($detected <= 0 || $detected > self::FORMAT_AUTO) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Unknow mode');
+            require_once 'Zebra/Validate/Exception.php';
+            throw new Zebra_Validate_Exception('Modo desconhecido');
         }
 
         $this->_separatorMode = $detected;
+        return $this;
+    }
+
+    /**
+     * @param callback $service
+     * @return Zebra_Validate_Cpf provides a fluent interface
+     * @throws Zebra_Validate_Exception
+     */
+    public function setService($service)
+    {
+        if (!is_callable($service)) {
+            require_once 'Zebra/Validate/Exception.php';
+            throw new Zebra_Validate_Exception('Callback inválido');
+        }
+
+        $this->_service = $service;
         return $this;
     }
 
@@ -111,6 +138,14 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
     public function getSeparatorMode()
     {
         return $this->_separatorMode;
+    }
+
+    /**
+     * @return callback
+     */
+    public function getService()
+    {
+        return $this->_service;
     }
 
     /**
@@ -153,6 +188,16 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
         if (!$check) {
             $this->_error(self::NOT_CPF);
             return false;
+        }
+
+        if (null !== $this->_service) {
+            require_once 'Zend/Validate/Callback.php';
+            $callback = new Zend_Validate_Callback($this->_service);
+            $callback->setOptions($this->_separatorMode);
+            if (!$callback->isValid($value)) {
+                $this->_error(self::SERVICE, $value);
+                return false;
+            }
         }
 
         return true;
