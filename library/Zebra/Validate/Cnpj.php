@@ -169,7 +169,7 @@ class Zebra_Validate_Cnpj extends Zend_Validate_Abstract
             $value = $this->_cleanFormat($value);
         } else if (self::FORMAT_AUTO === $mode) {
             if (!preg_match('/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/', $value) &&
-                !preg_match('/^\d{14,15}$/', $value)) {
+                !preg_match('/^\d{14}$/', $value)) {
                 $this->_error(self::INVALID_FORMAT);
                 return false;
             }
