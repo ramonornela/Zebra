@@ -209,28 +209,28 @@ class Zebra_Validate_Cnpj extends Zend_Validate_Abstract
      */
     protected function _checkSum($value)
     {
-        $add = ($value[0] * 5) + ($value[1] * 4) + ($value[2] * 3) + ($value[3] * 2)
+        $sum = ($value[0] * 5) + ($value[1] * 4) + ($value[2] * 3) + ($value[3] * 2)
              + ($value[4] * 9) + ($value[5] * 8) + ($value[6] * 7) + ($value[7] * 6)
              + ($value[8] * 5) + ($value[9] * 4) + ($value[10] * 3) + ($value[11] * 2);
 
-        $add    = $add - (11 * (floor($add / 11)));
+        $rest    = $sum % 11;
         $result = 0;
-        if ($add != 0 && $add != 1) {
-            $result = 11 - $add;
+        if ($rest != 0 && $rest != 1) {
+            $result = 11 - $rest;
         }
 
         if ($result != $value[12]) {
             return false;
         }
 
-        $add = $value[0] * 6 + $value[1] * 5 + $value[2] * 4 + $value[3] * 3 + $value[4] * 2
+        $sum = $value[0] * 6 + $value[1] * 5 + $value[2] * 4 + $value[3] * 3 + $value[4] * 2
              + $value[5] * 9 + $value[6] * 8 + $value[7] * 7 + $value[8] * 6 + $value[9] * 5
              + $value[10] * 4 + $value[11] * 3 + $value[12] * 2;
 
-        $add       = $add - (11 * (floor ($add/11)));
+        $rest     = $sum % 11;
         $resultEnd = 0;
-        if ($add != 0 && $add != 1) {
-            $resultEnd = 11 - $add;
+        if ($rest != 0 && $rest != 1) {
+            $resultEnd = 11 - $rest;
         }
 
         if ($resultEnd != $value[13]) {
