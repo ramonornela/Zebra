@@ -14,7 +14,7 @@ require_once 'Zend/Validate/Abstract.php';
  * @category Zebra
  * @package  Zebra_Validate
  */
-class Zebra_Validate_Cpf extends Zend_Validate_Abstract
+class Zebra_Validate_Cnpj extends Zend_Validate_Abstract
 {
     /**#@+
      * @const separator mode
@@ -27,10 +27,10 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
     /**#@+
      * @const messages templates
      */
-    const INVALID        = 'cpfInvalid';
-    const INVALID_FORMAT = 'cpfInvalidFormat';
-    const NOT_CPF        = 'notCpf';
-    const SERVICE        = 'cpfService';
+    const INVALID        = 'cnpjInvalid';
+    const INVALID_FORMAT = 'cnpjInvalidFormat';
+    const NOT_CNPJ       = 'notCnpj';
+    const SERVICE        = 'cnpjService';
     /**#@-*/
 
     /**
@@ -53,8 +53,8 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
     protected $_messageTemplates = array(
         self::INVALID        => 'Tipo de dado inválido. É esperado uma string',
         self::INVALID_FORMAT => 'Formatação é inválida',
-        self::NOT_CPF        => "'%value%' não é um CPF válido",
-        self::SERVICE        => "'%value%' parece ser um número de CPF inválido",
+        self::NOT_CNPJ       => "'%value%' não é um CNPJ válido",
+        self::SERVICE        => "'%value%' parece ser um número de CNPJ inválido",
     );
 
     /**
@@ -118,7 +118,7 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
 
     /**
      * @param callback $service
-     * @return Zebra_Validate_Cpf provides a fluent interface
+     * @return Zebra_Validate_Cnpj provides a fluent interface
      * @throws Zebra_Validate_Exception
      */
     public function setService($service)
@@ -162,31 +162,30 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
         $mode = $this->getSeparatorMode();
 
         if (self::FORMAT_SEPARATOR === $mode) {
-            if (!preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $value)) {
+            if (!preg_match('/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/', $value)) {
                 $this->_error(self::INVALID_FORMAT);
                 return false;
             }
             $value = $this->_cleanFormat($value);
         } else if (self::FORMAT_AUTO === $mode) {
-            if (!preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $value) &&
-                !preg_match('/^\d{11}$/', $value)) {
+            if (!preg_match('/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/', $value) &&
+                !preg_match('/^\d{14,15}$/', $value)) {
                 $this->_error(self::INVALID_FORMAT);
                 return false;
             }
             $value = $this->_cleanFormat($value);
         } else if (self::FORMAT_CLEAN === $mode) {
-            if (!preg_match('/^\d{11}$/', $value)) {
+            if (!preg_match('/^\d{14}$/', $value)) {
                 $this->_error(self::INVALID_FORMAT);
                 return false;
             }
         }
 
         // checksum
-        $check = $this->_checkSum($value, 10)
-              && $this->_checkSum($value, 11);
+        $check = $this->_checkSum($value);
 
         if (!$check) {
-            $this->_error(self::NOT_CPF);
+            $this->_error(self::NOT_CNPJ);
             return false;
         }
 
@@ -208,22 +207,37 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
      * @param  integer $digit
      * @return boolean
      */
-    protected function _checkSum($value, $digit)
+    protected function _checkSum($value)
     {
-        // sum
-        $sum = 0;
-        for ($i = 0; $i < $digit - 1; $i++) {
-            $sum += $value[$i] * ($digit - $i);
+        $add = ($value[0] * 5) + ($value[1] * 4) + ($value[2] * 3) + ($value[3] * 2)
+             + ($value[4] * 9) + ($value[5] * 8) + ($value[6] * 7) + ($value[7] * 6)
+             + ($value[8] * 5) + ($value[9] * 4) + ($value[10] * 3) + ($value[11] * 2);
+
+        $add    = $add - (11 * (floor($add / 11)));
+        $result = 0;
+        if ($add != 0 && $add != 1) {
+            $result = 11 - $add;
         }
 
-        // remain
-        $remain = 11 - ($sum % 11);
-        if ($remain == 10 || $remain == 11) {
-            $remain = 0;
+        if ($result != $value[12]) {
+            return false;
         }
 
-        // check
-        return $remain == $value[$digit - 1];
+        $add = $value[0] * 6 + $value[1] * 5 + $value[2] * 4 + $value[3] * 3 + $value[4] * 2
+             + $value[5] * 9 + $value[6] * 8 + $value[7] * 7 + $value[8] * 6 + $value[9] * 5
+             + $value[10] * 4 + $value[11] * 3 + $value[12] * 2;
+
+        $add       = $add - (11 * (floor ($add/11)));
+        $resultEnd = 0;
+        if ($add != 0 && $add != 1) {
+            $resultEnd = 11 - $add;
+        }
+
+        if ($resultEnd != $value[13]) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -232,6 +246,6 @@ class Zebra_Validate_Cpf extends Zend_Validate_Abstract
      */
     protected function _cleanFormat($value)
     {
-        return str_replace(array('.', '-'), '', $value);
+        return str_replace(array('.', '-', '/'), '', $value);
     }
 }
